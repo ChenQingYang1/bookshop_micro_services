@@ -1,0 +1,27 @@
+server:
+  port: 8083
+spring:
+  application:
+    #    配置服务的名称
+    name: user-provider
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://182.92.115.193:3306/bookstore?serverTimezone=UTC
+    username: root
+    password: mysql123456
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+mybatis:
+  type-aliases-package: com.bjtu.book_shop_rear.entity
+  mapper-locations: classpath:mybatis/dao/*.xml
+#pagehelper分页插件配置
+pagehelper:
+  helper-dialect: mysql
+  reasonable: true
+  support-methods-arguments: true
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8082/eureka/

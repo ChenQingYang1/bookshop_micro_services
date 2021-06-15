@@ -1,0 +1,31 @@
+server:
+  port: 8082
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://182.92.115.193:3306/bookstore?serverTimezone=UTC
+    username: root
+    password: mysql123456
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+mybatis:
+  type-aliases-package: com.bjtu.book_shop_rear.entity
+  mapper-locations: classpath:mybatis/dao/*.xml
+#pagehelper分页插件配置
+pagehelper:
+  helper-dialect: mysql
+  reasonable: true
+  support-methods-arguments: true
+eureka:
+  #  设置该服务注册中心的hostname
+  instance:
+    hostname: localhost
+  client:
+    #    由于我们目前创建的应用是一个服务注册中心，而不是普通的应用，默认情况下，这个应用会向注册中心（也是它自己）注册它自己，设置为false表示禁止这种自己向自己注册的默认行为
+    register-with-eureka: false
+    #    表示不去检索其他的服务，因为服务注册中心本身的职责就是维护服务实例，它不需要去检索其他服务
+    fetch-registry: false
+    service-url:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
