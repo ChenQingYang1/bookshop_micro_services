@@ -11,7 +11,7 @@ public class CrosConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedOrigins("*")
-                .allowedMethods("GET","POST","HEAD","PUT","DELETE","OPTIONS")
+                .allowedMethods("GET", "POST", "HEAD", "PUT", "DELETE", "OPTIONS")
                 .allowCredentials(true)
                 .maxAge(3600)
                 .allowedHeaders("*");
@@ -23,6 +23,6 @@ public class CrosConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new LoginHandlerInterceptor())
                 .addPathPatterns("/**")
-                .excludePathPatterns("/", "/user/login", "/register");
+                .excludePathPatterns("/", "/user/login", "/user/logout", "/register");
     }
 }

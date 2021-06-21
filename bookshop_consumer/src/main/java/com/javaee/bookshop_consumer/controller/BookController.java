@@ -2,6 +2,9 @@ package com.javaee.bookshop_consumer.controller;
 
 import com.javaee.bookshop_consumer.common.Result;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -28,8 +31,19 @@ public class BookController {
 
     @PostMapping(value = "/addbook")
     public Result addBook(@RequestParam(value = "file") MultipartFile file, @RequestParam(value = "bookName") String bookName, @RequestParam(value = "bookDesc") String bookDesc) throws Exception {
-        MultiValueMap<String, Object> dataMap = new LinkedMultiValueMap<String, Object>();
-        dataMap.add("file", file);
+        ByteArrayResource fileAsResource = new ByteArrayResource(file.getBytes()) {
+            @Override
+            public String getFilename() {
+                return file.getOriginalFilename();
+            }
+
+            @Override
+            public long contentLength() {
+                return file.getSize();
+            }
+        };
+        MultiValueMap dataMap = new LinkedMultiValueMap();
+        dataMap.add("file", fileAsResource);
         dataMap.add("bookName", bookName);
         dataMap.add("bookDesc", bookDesc);
         Result requestResult = restTemplate.postForObject("http://book-provider/book/addbook", dataMap, Result.class);
@@ -54,7 +68,13 @@ public class BookController {
     }
 
     @PostMapping(value = "/download")
-    public ResponseEntity<byte[]> downloadBook(@RequestParam(value = "bookId") int bookId, @RequestHeader("User-Agent") String userAgent) throws Exception {
-        return null;
+    public byte[] downloadBook(@RequestParam(value = "bookId") int bookId, @RequestHeader("User-Agent") String userAgent) throws Exception {
+        MultiValueMap dataMap = new LinkedMultiValueMap();
+        dataMap.add("bookId", bookId);
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("user-agent", userAgent);
+        byte[] entity = restTemplate.postForObject("http://book-provider/book/download",new HttpEntity<>(dataMap, headers), byte[].class);
+
+        return entity;
     }
 }
