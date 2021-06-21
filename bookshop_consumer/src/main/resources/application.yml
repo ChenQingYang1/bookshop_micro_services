@@ -13,9 +13,6 @@ spring:
     multipart:
       max-file-size: 50MB
       max-request-size: 50MB
-mybatis:
-  type-aliases-package: com.bjtu.book_shop_rear.entity
-  mapper-locations: classpath:mybatis/dao/*.xml
 #pagehelper分页插件配置
 pagehelper:
   helper-dialect: mysql
