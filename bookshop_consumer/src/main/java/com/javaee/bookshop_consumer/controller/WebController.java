@@ -1,23 +1,33 @@
 package com.javaee.bookshop_consumer.controller;
 
-import com.javaee.bookshop_consumer.common.Result;
 import com.javaee.bookshop_consumer.entity.User;
+import com.javaee.bookshop_consumer.kafka.KafkaProducer;
+import com.netflix.discovery.converters.Auto;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
-import javax.servlet.http.HttpServletRequest;
+import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 
 @RestController
+@RequestMapping(value = "/kafka/", produces = APPLICATION_JSON_UTF8_VALUE)
 public class WebController {
 
     @Autowired
+    private KafkaTemplate<String,String> kafkaTemplate;
+
+    @Autowired
     private RestTemplate restTemplate;
+
+    @Autowired
+    private KafkaProducer kafkaProducer;
+
+    @PostMapping("/message")
+    public User sendKafkaMsg(@RequestBody User user){
+        kafkaProducer.sendKafkaMessage(user);
+        return user;
+    }
 
     @RequestMapping("/web/hello1")
     public String hello1() {

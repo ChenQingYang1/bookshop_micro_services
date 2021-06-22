@@ -13,6 +13,17 @@ spring:
     multipart:
       max-file-size: 50MB
       max-request-size: 50MB
+  kafka:
+    producer:
+      bootstrap-servers: localhost:9092
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+    consumer:
+      bootstrap-servers: localhost:9092
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+
 mybatis:
   type-aliases-package: com.javaee.bookshop_user_provider.entity
   mapper-locations: classpath:mybatis/dao/*.xml

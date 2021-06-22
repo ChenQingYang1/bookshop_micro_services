@@ -1,11 +1,13 @@
 package com.javaee.bookshop_consumer.controller;
 
+import com.google.gson.Gson;
 import com.javaee.bookshop_consumer.common.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +17,8 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/book")
 public class BookController {
+    @Autowired
+    private KafkaTemplate<String,String> kafkaTemplate;
 
     @Autowired
     private RestTemplate restTemplate;
@@ -59,12 +63,23 @@ public class BookController {
         return requestResult;
     }
 
+//    @PostMapping("/delbook")
+//    public Result delBook(@RequestParam Integer bookId) {
+//        MultiValueMap<String, Object> dataMap = new LinkedMultiValueMap<String, Object>();
+//        dataMap.add("bookId", bookId);
+//        Result requestResult = restTemplate.postForObject("http://book-provider/book/delbook", dataMap, Result.class);
+//        return requestResult;
+//    }
+
+    /**
+     * 使用kafka实现删除书籍，此处作为kafka的生产者
+     * @param bookId
+     * @return
+     */
     @PostMapping("/delbook")
     public Result delBook(@RequestParam Integer bookId) {
-        MultiValueMap<String, Object> dataMap = new LinkedMultiValueMap<String, Object>();
-        dataMap.add("bookId", bookId);
-        Result requestResult = restTemplate.postForObject("http://book-provider/book/delbook", dataMap, Result.class);
-        return requestResult;
+        kafkaTemplate.send("delBookTopic", String.valueOf(bookId));
+        return Result.success();
     }
 
     @PostMapping(value = "/download")

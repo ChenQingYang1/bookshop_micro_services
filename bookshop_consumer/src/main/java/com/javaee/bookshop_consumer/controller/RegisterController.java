@@ -1,8 +1,10 @@
 package com.javaee.bookshop_consumer.controller;
 
+import com.google.gson.Gson;
 import com.javaee.bookshop_consumer.common.Result;
 import com.javaee.bookshop_consumer.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

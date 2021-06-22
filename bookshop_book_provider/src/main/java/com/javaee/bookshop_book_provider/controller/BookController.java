@@ -6,9 +6,11 @@ import com.javaee.bookshop_book_provider.dto.ContentPage;
 import com.javaee.bookshop_book_provider.entity.Book;
 import com.javaee.bookshop_book_provider.serviceInterface.BookService;
 import org.apache.commons.io.FileUtils;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -87,12 +89,45 @@ public class BookController {
         return Result.success(pageInfo);
     }
 
-    @PostMapping("/delbook")
-    public Result delBook(@RequestParam Integer bookId) {
+//    @PostMapping("/delbook")
+//    public Result delBook(@RequestParam Integer bookId) {
+//        try {
+//            Book existing = bookService.findById(bookId);
+//            if (existing == null) {
+//                return Result.error("576", "书本不存在！");
+//            }
+//
+//            //定义文件路径
+//            String filePath = existing.getFilepath();
+//            //这里因为我文件是相对路径 所以需要在路径前面加一个点
+//            File file = new File("." + filePath);
+//            if (file.exists()) {//文件是否存在
+//                file.delete();//删除文件
+//            }
+//
+//            bookService.del(bookId);
+//            return Result.success();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return Result.error("324", "删除书本失败！");
+//        }
+//    }
+
+    /**
+     * 使用kafka,此处作为kafka的消费者
+     * @param consumerRecord
+     */
+    @KafkaListener(topics = "delBookTopic", groupId = "myGroup2")
+    public void obtainMessage(ConsumerRecord<String,String> consumerRecord){
+        System.out.println("删除书本");
+        String bookId = consumerRecord.value();
+        delBook(Integer.parseInt(bookId));
+    }
+    public void delBook(@RequestParam Integer bookId) {
         try {
             Book existing = bookService.findById(bookId);
             if (existing == null) {
-                return Result.error("576", "书本不存在！");
+                return ;
             }
 
             //定义文件路径
@@ -104,10 +139,10 @@ public class BookController {
             }
 
             bookService.del(bookId);
-            return Result.success();
+            return ;
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.error("324", "删除书本失败！");
+            return ;
         }
     }
 
