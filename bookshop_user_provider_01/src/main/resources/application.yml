@@ -1,0 +1,43 @@
+server:
+  port: 8086
+spring:
+  application:
+    #    配置服务的名称
+    name: user-provider
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://182.92.115.193:3306/bookstore?serverTimezone=UTC
+    username: root
+    password: mysql123456
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+  kafka:
+    producer:
+      bootstrap-servers: localhost:9092
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+    consumer:
+      bootstrap-servers: localhost:9092
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+
+mybatis:
+  type-aliases-package: com.javaee.bookshop_user_provider.entity
+  mapper-locations: classpath:mybatis/dao/*.xml
+#pagehelper分页插件配置
+pagehelper:
+  helper-dialect: mysql
+  reasonable: true
+  support-methods-arguments: true
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8082/eureka/
+      #      每隔两秒，向服务端发送一次心跳，证明自己依然存活
+  instance:
+    lease-renewal-interval-in-seconds: 2
+    #    告诉服务端，如果我10s内没有发心跳，就代表我故障了，将我踢出
+    lease-expiration-duration-in-seconds: 10
