@@ -2,6 +2,7 @@ package com.javaee.bookshop_consumer.controller;
 
 import com.javaee.bookshop_consumer.common.Result;
 import com.javaee.bookshop_consumer.entity.User;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -22,6 +23,7 @@ public class LoginController {
     private RestTemplate restTemplate;
 
     @PostMapping("/login")
+    @HystrixCommand(fallbackMethod = "loginError")
     public Result<User> login(@RequestParam String email, @RequestParam String password, HttpServletRequest request) {
         MultiValueMap<String, Object> dataMap = new LinkedMultiValueMap<String, Object>();
         dataMap.add("email", email);
@@ -31,6 +33,10 @@ public class LoginController {
         HttpSession session = request.getSession();
         session.setAttribute("user", userResult.getData());
         return userResult;
+    }
+
+    public Result<User> loginError(@RequestParam String email, @RequestParam String password, HttpServletRequest request){
+        return Result.error("522", "发生熔断错误！");
     }
 
     @PostMapping("/logout")

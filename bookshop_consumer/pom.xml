@@ -81,6 +81,13 @@
             <artifactId>spring-kafka</artifactId>
         </dependency>
 
+<!--        Hystrix熔断-->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-hystrix</artifactId>
+            <version>1.4.4.RELEASE</version>
+        </dependency>
+
 
     </dependencies>
     <dependencyManagement>
